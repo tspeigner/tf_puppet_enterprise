@@ -8,10 +8,10 @@
 # Declare the instance resource here
 resource "aws_instance" "web" {
   associate_public_ip_address = "true"
-  key_name                    = "tommy"
+  key_name                    = "<enter your key_name>"
   instance_type               = "t2.medium"
-  security_groups             = ["sg-190e7962"] ##Tommy Master SG
-  subnet_id                   = "subnet-fdbb3198" 
+  security_groups             = ["<enter SG>"] 
+  subnet_id                   = "<enter subnet_id>" 
   ami                         = "${var.aws_ami}"
 
 
@@ -40,9 +40,6 @@ resource "aws_instance" "web" {
       "sudo bash -c \"./puppet-enterprise-installer -c pe.conf\"",
       "sudo bash -c \"/opt/puppetlabs/bin/puppet agent -t\"",
       "sudo bash -c \"/opt/puppetlabs/bin/puppet agent -t\"",
-      ## Download and extract Go Git Server files
-      #"wget --content-disposition \"${var.gogs_installer}\"",
-      #"tar -zxvf linux_amd64.tar.gz",
     ]
    connection {
     type        = "ssh"
@@ -55,8 +52,8 @@ resource "aws_instance" "web" {
 
   tags {
     Name    = "master.inf.puppet.vm"
-    Owner   = "Tommy"
-    Purpose = "TSE Test"
+    Owner   = ""
+    Purpose = ""
     Tech    = "Terraform"
   }
 }
