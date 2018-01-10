@@ -1,7 +1,6 @@
 # Compiled files
 *.tfstate
 *.tfstate.backup
-variables.*
 *.pem
 
 
