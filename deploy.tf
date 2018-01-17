@@ -8,10 +8,10 @@
 # Declare the instance resource here
 resource "aws_instance" "web" {
   associate_public_ip_address = "true"
-  key_name                    = "<enter your key_name>"
-  instance_type               = "t2.medium"
-  security_groups             = ["<enter SG>"] 
-  subnet_id                   = "<enter subnet_id>" 
+  key_name                    = "${var.key_name}"
+  instance_type               = "m3.large"
+  security_groups             = ["${var.security_groups}"] 
+  subnet_id                   = "${var.subnet_id}" 
   ami                         = "${var.aws_ami}"
 
 
@@ -40,6 +40,21 @@ resource "aws_instance" "web" {
       "sudo bash -c \"./puppet-enterprise-installer -c pe.conf\"",
       "sudo bash -c \"/opt/puppetlabs/bin/puppet agent -t\"",
       "sudo bash -c \"/opt/puppetlabs/bin/puppet agent -t\"",
+      "sudo bash -c \"/opt/puppetlabs/bin/puppet module install beersy-pe_code_manager_easy_setup --version 2.0.2\"",
+      "sudo bash -c \"/opt/puppetlabs/bin/puppet agent -t\"",
+      "sudo bash -c \"/opt/puppetlabs/bin/puppet agent -t\"",
+      "sudo bash -c \"/bin/touch /root/.puppetlabs/token\"",
+      "sleep 3",
+      "sudo bash -c \"/bin/curl -k -X POST -H 'Content-Type: application/json' -d '{\"login\": \"admin\", \"password\": \"puppetlabs\"}' https://${aws_instance.web.private_dns}:4433/rbac-api/v1/auth/token >> ~/.puppetlabs/token\"",
+      "sleep 3",
+     # "sudo bash -c \"/opt/puppetlabs/bin/puppet-task run pe_code_manager_easy_setup::setup_code_manager r10k_remote_url=git@github.com:tspeigner/control-repo-1.git\"",
+      "echo \"Now, put this generated Public SSH Key in your version control system:\"",
+     # "echo \"$(sudo /usr/bin/head -n 1 /etc/puppetlabs/puppetserver/ssh/id-control_repo.rsa.pub)\"",
+     # "echo ********************************",
+     # "echo \"Also, put the appropriate webhook URL's in your version control system:\"",
+     # "webhook_url=$(sudo /usr/bin/head -n 1 /etc/puppetlabs/puppetserver/.puppetlabs/webhook_url.txt)",
+     # "echo More information about webhook url's and all their parameters can be found here:",
+     # "echo https://puppet.com/docs/pe/2017.3/code_management/code_mgr_webhook.html#triggering-code-manager-with-a-webhook"
     ]
    connection {
     type        = "ssh"
